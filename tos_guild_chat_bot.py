@@ -14,16 +14,19 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument("--access_token", required=True, help="Discord Access Token")
 parser.add_argument("--server_id", required=True, help="Discord Server Id")
+parser.add_argument("--channel_id", help="Discord Channel Id")
 parser.add_argument("--tos_ss_dir", default='C:/Nexon/TreeofSaviorJP/release/screenshot/', help="ToS screenshot directory")
 
 args = parser.parse_args()
 
 ### Settings
 GUILD_SERVER_ID = args.server_id
+CHANNEL_ID = args.channel_id
 TOS_SS_DIR = args.tos_ss_dir
 ACCESS_TOKEN = args.access_token
 CHAT_RECORDS_FILE_FORMAT = 'recchat_{0:%Y%m%d}*.txt'
-GUILD_CHAT_LOG_PATTERN = r"(.+)\[ギルド\s+\] ([^\:]+)\:(.+)"
+# GUILD_CHAT_LOG_PATTERN = r"(.+)\[ギルド\s+\] ([^\:]+)\:(.+)"
+GUILD_CHAT_LOG_PATTERN = r"(.+)\[Guild\] ([^\:]+)\:(.+)"
 INITIAL_REPORT_TIME = 1 #minutes
 MESSAGE_SEND_BULK_SIZE = 10
 FETCH_WAIT_TIME = 5 #seconds
@@ -83,6 +86,8 @@ async def send_guild_messages(destination):
 async def on_ready():
     logger.info('Logged in as %s, id: %s', client.user.name, client.user.id)
     destination = client.get_server(GUILD_SERVER_ID)
+    if channel_id is not null:
+        destination = destination.get_channel(CHANNEL_ID)
     logger.info(destination)
     await client.send_message(destination, "GuildChatBot started. Reporting Messages in Last " + str(INITIAL_REPORT_TIME) + " Minutes...")
     while True:
